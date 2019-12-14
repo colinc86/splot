@@ -46,7 +46,9 @@ func (p *SignalPlotter) PlotSignal(signal []float64, seriesTitle string, filenam
 	}
 
 	// Save the plot to a PNG file.
-	if err := pe.Save(16*vg.Inch, 8*vg.Inch, file); err != nil {
+	if err := pe.Save(16*vg.Inch, 8*vg.Inch, filename); err != nil {
 		return err
 	}
+
+	return nil
 }

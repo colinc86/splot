@@ -23,8 +23,8 @@ func NewSignalPlotter(title string, xAxisTitle string, yAxisTitle string) *Signa
 	}
 }
 
-// PlotSignal plots a signal and saves the image to a PNG file.
-func (p *SignalPlotter) PlotSignal(signal []float64, seriesTitle string, filename string) error {
+// PlotSignals plots signals and saves the image to a PNG file.
+func (p *SignalPlotter) PlotSignals(signals [][]float64, titles []string, filename string) error {
 	pe, err := plot.New()
 	if err != nil {
 		return err
@@ -34,15 +34,22 @@ func (p *SignalPlotter) PlotSignal(signal []float64, seriesTitle string, filenam
 	pe.X.Label.Text = p.XAxisTitle
 	pe.Y.Label.Text = p.YAxisTitle
 
-	plotValues := make(plotter.XYs, len(signal))
+	var plots []plotter.XYs
+	for _, signal := range signals {
+		plotValues := make(plotter.XYs, len(signal))
 
-	for i, v := range signal {
-		plotValues[i].X = float64(i)
-		plotValues[i].Y = v
+		for i, v := range signal {
+			plotValues[i].X = float64(i)
+			plotValues[i].Y = v
+		}
+
+		plots = append(plots, plotValues)
 	}
 
-	if err := plotutil.AddLines(pe, seriesTitle, plotValues); err != nil {
-		return err
+	for i, plot := range plots {
+		if err := plotutil.AddLines(pe, titles[i], plot); err != nil {
+			return err
+		}
 	}
 
 	// Save the plot to a PNG file.
